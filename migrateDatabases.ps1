@@ -1,6 +1,5 @@
 <#
-Script to be used to migrate databases from vmepmdblive1(source) to epm-pd-sql01(destination) as part of the Server 2016 migration taking place 
-in Summer 2020. 
+Script to be used to migrate databases from a source server to a destination server
 
 Script should: 
 1. Read a list of databases from a CSV file
@@ -11,12 +10,42 @@ Script should:
     d. Log the output
 #>
 
+# params
+# srcSQLServer - the Server we are copying drom
+# destSQLServer - the Server we are copying to
+# $databaseCSV - a CSV file which contains the databases we wish to migrate
+
+param($srcSQLServer, $destSQLServer, $databaseCSV)
+
+if (-not $srcSQLServer) {
+    throw 'You must supply a source SQL Server with the parameter -srcSQLServer'
+}
+
+if (-not $destSQLServer) {
+    throw 'You must supply a destination SQL Server with the parameter -destSQLServer'
+}
+
+if (-not $databaseCSV) {
+    throw 'You must supply a CSV file with the databases which you wish to restore -databaseCSV'
+}
+
+# Confirmation to ensure we aren't overwriting any data we don't want to
+$confirmation = Read-Host "Are you sure you want to restore databases from $srcSQLServer to $destSQLServer ? [y,n]"
+while($confirmation -ne "y")
+{
+    if ($confirmation -eq "n") {
+        Write-Output "Exiting......."
+        exit
+    }
+}
+
+
+"Beginning........"
+
 # Get the current location so that we can switch back to this context after SQL Calls
 $workingLocation = Get-Location
 
 # Set up Source and Destination Servers
-$srcSQLServer = "EPM-TS-SQL01"
-$destSQLServer = "EPM-SP-SQL01"
 $backupDir = "\\$srcSQLServer\g$\backup\temp"
 $restoreDir = "\\$destSQLServer\g$\backup\temp"
 
@@ -53,7 +82,6 @@ else {
 
 
 # Define the CSV file that lists the databases
-$databaseCSV = ".\databases.csv"
 
 # Check that there is a source and a destination SQL server specified
 if(!$srcSQLServer -or !$destSQLServer) {
