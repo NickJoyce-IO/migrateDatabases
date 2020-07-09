@@ -80,9 +80,6 @@ else {
 }
 
 
-
-# Define the CSV file that lists the databases
-
 # Check that there is a source and a destination SQL server specified
 if(!$srcSQLServer -or !$destSQLServer) {
     Write-Error "No Source or Destination SQL servers provided"

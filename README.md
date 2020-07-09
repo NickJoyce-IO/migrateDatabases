@@ -7,13 +7,11 @@ Steps for use:
 
 1. Rename the databasesSample.csv file to databases.csv
 2. Populate the file with the names of the databases you wish to copy (the databases must already exist on both servers)
-3. Update the script with the following vars and save
-``` powershell
-# Set up Source and Destination Servers, you may have different extensions always use temp as the temporary folder, if you use your
-# root backup folder the script will remove the dir at the end. So best avoided.
-$srcSQLServer = "<SQL Server name>"
-$destSQLServer = "<SQL Server name>"
-$backupDir = "\\$srcSQLServer\g$\backup\temp"
-$restoreDir = "\\$destSQLServer\g$\backup\temp"
+3. Run the script with the parameters -srcSQLServer, -destSQLServer, -databaseCSV
+
+ie. 
+
+``` PowerShell
+> ./migrateDatabases.ps1 -srcSQLServer mySourceSQLServer -destSQLServer myDestSQLServer -databaseCSV pathToDatabaseCSV
+
 ```
-4. Run the script
