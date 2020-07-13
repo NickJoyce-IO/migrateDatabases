@@ -11,7 +11,7 @@ Script should:
 #>
 
 # params
-# srcSQLServer - the Server we are copying drom
+# srcSQLServer - the Server we are copying from
 # destSQLServer - the Server we are copying to
 # $databaseCSV - a CSV file which contains the databases we wish to migrate
 
@@ -27,6 +27,10 @@ if (-not $destSQLServer) {
 
 if (-not $databaseCSV) {
     throw 'You must supply a CSV file with the databases which you wish to restore -databaseCSV'
+}
+
+if ($destSQLServer -eq "epm-pd-sql01") {
+    throw 'You cannot copy to the production SQL server'
 }
 
 # Confirmation to ensure we aren't overwriting any data we don't want to
@@ -79,18 +83,6 @@ else {
     Write-Output "Temp restore folder exists"
 }
 
-
-# Check that there is a source and a destination SQL server specified
-if(!$srcSQLServer -or !$destSQLServer) {
-    Write-Error "No Source or Destination SQL servers provided"
-    exit
-}
-
-# Check that a file was provided or otherwise quit
-if (!$databaseCSV) {
-    Write-Error "No database CSV provided"
-    exit
-}
 
 # Import the CSV file into an array for future use
 $databaseArr = Import-CSV $databaseCSV
